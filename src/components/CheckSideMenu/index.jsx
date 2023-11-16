@@ -8,7 +8,7 @@ import "./style.css";
 
 const CheckSideMenu = () => {
   const context = useContext(ShoppingCardContext);
-  console.log(context.cardProducts)
+  console.log(context.cardProducts);
 
   const handleDelete = (id) => {
     const filteredProducts = context.cardProducts.filter(
@@ -19,15 +19,16 @@ const CheckSideMenu = () => {
 
   const handleChekOut = () => {
     const orderToAdd = {
-      date: '01.02.23',
+      date: "01.02.23",
       products: context.cardProducts,
       totalProducts: context.cardProducts.legth,
-      totalPrice: totalPrice(context.cardProducts)
-    }
+      totalPrice: totalPrice(context.cardProducts),
+    };
 
-    context.setOrder([...context.order, orderToAdd])
-    context.setCardProducts([])
-  }
+    context.setOrder([...context.order, orderToAdd]);
+    context.setCardProducts([]);
+    context.setSearchByTitle(null)
+  };
 
   return (
     <aside
@@ -45,7 +46,7 @@ const CheckSideMenu = () => {
         </div>
       </div>
       <div className="px-6 overflow-y-scroll flex-1">
-        {context.cardProduct.map(product => (
+        {context.cardProducts.map(product => (
           <OrderCard
             key={product.id}
             id={product.id}
@@ -59,10 +60,17 @@ const CheckSideMenu = () => {
       <div className="px-6 mb-6">
         <p className="flex justify-between items-center">
           <span className="font-light">Total:</span>
-          <span className="font-medium text-2xl">${totalPrice(context.cardProducts)}</span>
+          <span className="font-medium text-2xl">
+            ${totalPrice(context.cardProducts)}
+          </span>
         </p>
         <Link to="/my-orders/last">
-          <button className="w-full py-3 text-white bg-black rounded-lg" onClick={() => handleChekOut()}>CheckOut</button>
+          <button
+            className="w-full py-3 text-white bg-black rounded-lg"
+            onClick={() => handleChekOut()}
+          >
+            CheckOut
+          </button>
         </Link>
       </div>
     </aside>

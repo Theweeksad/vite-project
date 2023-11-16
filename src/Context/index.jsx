@@ -1,4 +1,4 @@
-import { createContext, useState} from "react";
+import { createContext, useState, useEffect } from "react";
 
 export const ShoppingCardContext = createContext();
 
@@ -19,6 +19,54 @@ export const ShoppingCardProvider = ({ children }) => {
 
   const [order, setOrder] = useState([]);
 
+  const [items, setItems] = useState(null);
+
+  const [filteredItems, setFilteredItems] = useState(null);
+
+  const [searchByTitle, setSearchByTitle] = useState(null);
+
+  const [searchByCategory, setSearchByCategory] = useState(null);
+
+  useEffect(() => {
+    fetch(' https://api.escuelajs.co/api/v1/products')
+      .then(response => response.json())
+      .then(data => setItems(data))
+  }, [])
+
+  const filteredItemsByTitle = (items, searchByTitle) => {
+    return items?.filter(item => item.title.toLowerCase().incluse(searchByTitle.toLowerCase()))
+  }
+
+  const filteredItemsByCategory = (items, searchByCategory) => {
+    return items?.filter(item => item.category.name.toLowerCase().incluse(searchByCategory.toLowerCase()))
+  }
+
+  const filteBy = (searchType, items, searchByTitle, searchByCategory)=> {
+    if(searchType === 'BY_TITLE') {
+      return filteredItemsByTitle(items, searchByTitle)
+    }
+
+    if(searchType === 'BY_CATEGORY') {
+      return filteredItemsByCategory(items, searchByCategory)
+    }
+
+    if(searchType === 'BY_CATEGORY') {
+      return filteredItemsByCategory(items, searchByCategory).filter(items => title.toLowerCase(),incluse(searchByTitle.toLowerCase()))
+    }
+
+    if(!searchType) {
+      return items
+    }
+  }
+
+  useEffect(() => {
+    if(searchByTitle && searchByCategory) setFilteredItems(filteBy('BY_CATEGORY-AND-CATEGORY', items, searchByTitle, searchByCategory));
+    if(searchByTitle && !searchByCategory) setFilteredItems(filteBy('BY_TITLE', items, searchByTitle, searchByCategory));
+    if(searchByTitle && searchByCategory) setFilteredItems(filteBy('BY_CATEGORY', items, searchByTitle, searchByCategory));
+    if(searchByTitle && !searchByCategory) setFilteredItems(filteBy(null, items, searchByTitle, searchByCategory));
+  }, [items, searchByTitle, searchByCategory])
+
+
   return (
     <ShoppingCardContext.Provider
     value={{
@@ -35,7 +83,14 @@ export const ShoppingCardProvider = ({ children }) => {
       openCheckoutSideMenu,
       closeCheckoutSideMenu,
       order,
-      setOrder
+      setOrder,
+      items,
+      setItems,
+      searchByTitle,
+      setSearchByTitle,
+      filteredItems,
+      searchByCategory,
+      setSearchByCategory
     }}>
       { children }
     </ShoppingCardContext.Provider>
